@@ -1,0 +1,36 @@
+{
+    "searchPlaceholder": "Search for recipes...",
+    "findRecipes": "Find Recipes",
+    "topRecipes": [
+        { "name": "Fesenjan", "link": "/en/recipes/fesenjan" },
+        { "name": "Ghormeh Sabzi", "link": "/en/recipes/ghormeh-sabzi" },
+        { "name": "Tahchin", "link": "/en/recipes/tahchin" },
+        { "name": "Kebab", "link": "/en/recipes/kebab" },
+        { "name": "Ash Reshteh", "link": "/en/recipes/ash-reshteh" }
+    ],
+    "ingredients": "Ingredients",
+    "instructions": "Instructions",
+    "backToHome": "Back to Home",
+    "recipes": {
+        "fesenjan": {
+            "ingredients": ["Pomegranate paste", "Walnuts", "Chicken", "Onion", "Spices"],
+            "instructions": "Cook chicken with onions and spices. Add ground walnuts and pomegranate paste. Simmer until thickened."
+        },
+        "ghormeh-sabzi": {
+            "ingredients": ["Herbs", "Kidney beans", "Lamb", "Dried lime", "Onion", "Spices"],
+            "instructions": "Fry herbs and onions. Add lamb, beans, dried lime, and spices. Simmer until meat is tender."
+        },
+        "tahchin": {
+            "ingredients": ["Rice", "Yogurt", "Saffron", "Chicken", "Eggs", "Spices"],
+            "instructions": "Mix rice with yogurt, saffron, and eggs. Layer with cooked chicken. Bake until golden."
+        },
+        "kebab": {
+            "ingredients": ["Ground meat", "Onion", "Spices"],
+            "instructions": "Mix ground meat with grated onion and spices. Shape onto skewers and grill."
+        },
+        "ash-reshteh": {
+            "ingredients": ["Noodles", "Beans", "Herbs", "Onion", "Garlic", "Spices"],
+            "instructions": "Cook beans and herbs. Add noodles and fried onions. Simmer until noodles are tender."
+        }
+    }
+}
