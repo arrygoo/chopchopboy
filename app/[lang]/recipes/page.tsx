@@ -31,6 +31,11 @@ export default function RecipesListPage({ params }: RecipesListPageProps) {
     {}
   );
 
+  // Sort recipes alphabetically within each cuisine
+  Object.keys(categorizedRecipes).forEach((cuisine) => {
+    categorizedRecipes[cuisine].sort((a, b) => a.name.localeCompare(b.name));
+  });
+
   return (
     <div className="flex flex-col min-h-screen font-[family:var(--font-geist-sans)] bg-sand-light text-navy-dark">
       <header className="w-full flex justify-between items-center p-2 text-sm bg-sand-light">
