@@ -7,6 +7,13 @@ interface RecipesListPageProps {
   };
 }
 
+// Ensure the Recipe type includes the 'name' property
+type Recipe = {
+  link: string;
+  name: string;
+  // other properties...
+};
+
 export default function RecipesListPage({ params }: RecipesListPageProps) {
   const { lang } = params;
   const translations = getTranslations(lang);
@@ -50,7 +57,7 @@ export default function RecipesListPage({ params }: RecipesListPageProps) {
       >
         <h1 className="text-3xl font-bold mb-6">{translations.allRecipes}</h1>
         <ul className="w-full max-w-2xl list-none pl-0">
-          {recipes.map((recipe: any, index: number) => (
+          {recipes.map((recipe: Recipe, index: number) => (
             <li key={index} className="mb-2 text-sage">
               <Link href={`/${lang}/recipes/${recipe.link.split("/").pop()}`}>
                 <span className="hover:underline">{recipe.name}</span>

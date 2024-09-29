@@ -3,9 +3,7 @@ import { getTranslations } from "../../../utils/getTranslations";
 import Link from "next/link";
 
 interface Recipe {
-  name: string;
-  ingredients: string[];
-  instructions: string[];
+  link: string;
 }
 
 interface RecipePageProps {
@@ -18,7 +16,7 @@ interface RecipePageProps {
 export default function RecipePage({ params }: RecipePageProps) {
   const { lang, recipe } = params;
   const translations = getTranslations(lang);
-  const recipeData = translations.topRecipes.find((r: any) =>
+  const recipeData = translations.topRecipes.find((r: Recipe) =>
     r.link.endsWith(recipe)
   );
 
@@ -114,12 +112,12 @@ export async function generateStaticParams() {
   const translationsEn = getTranslations("en");
   const translationsFa = getTranslations("fa");
 
-  const recipesEn = translationsEn.topRecipes.map((recipe: any) => ({
+  const recipesEn = translationsEn.topRecipes.map((recipe: Recipe) => ({
     lang: "en",
     recipe: recipe.link.split("/").pop(),
   }));
 
-  const recipesFa = translationsFa.topRecipes.map((recipe: any) => ({
+  const recipesFa = translationsFa.topRecipes.map((recipe: Recipe) => ({
     lang: "fa",
     recipe: recipe.link.split("/").pop(),
   }));
@@ -134,7 +132,7 @@ export async function generateMetadata({
 }) {
   const translations = getTranslations(params.lang);
   const title =
-    translations.topRecipes.find((r: any) => r.link.endsWith(params.recipe))
+    translations.topRecipes.find((r: Recipe) => r.link.endsWith(params.recipe))
       ?.name || "Recipe";
   return {
     title: `${title} | My Recipe App`,
