@@ -16,7 +16,7 @@ type Recipe = {
 
 export default function RecipesListPage({ params }: RecipesListPageProps) {
   const { lang } = params;
-  const translations = getTranslations(lang);
+  const translations = getTranslations(lang as "en" | "fa");
   const recipes = translations.topRecipes;
 
   return (

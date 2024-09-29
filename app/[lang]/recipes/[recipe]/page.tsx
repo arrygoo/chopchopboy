@@ -4,38 +4,50 @@ import Link from "next/link";
 
 interface Recipe {
   link: string;
+  name: string;
+  ingredients: string[];
+  instructions: string[];
 }
 
 interface RecipePageProps {
   params: {
-    lang: string;
+    lang: keyof Translations;
     recipe: string;
   };
 }
 
+type Translations = {
+  en: Record<string, string>;
+  fa: Record<string, string>;
+};
+
 export default function RecipePage({ params }: RecipePageProps) {
   const { lang, recipe } = params;
   const translations = getTranslations(lang);
-  const recipeData = translations.topRecipes.find((r: Recipe) =>
-    r.link.endsWith(recipe)
+  const recipeData = translations.topRecipes.find(
+    (r: { name: string; link: string }) => r.link.endsWith(recipe)
   );
 
   if (!recipeData) {
     notFound();
   }
 
-  // Mock data: Replace with actual data fetching logic
   const recipeDetails: Recipe = {
     name: recipeData.name,
-    ingredients: translations.recipes[recipe].ingredients[lang], // Access the correct language's ingredients
-    instructions: translations.recipes[recipe].instructions[lang], // Access the correct language's instructions
+    link: recipeData.link,
+    ingredients:
+      translations.recipes[recipe as keyof typeof translations.recipes]
+        .ingredients[lang],
+    instructions:
+      translations.recipes[recipe as keyof typeof translations.recipes]
+        .instructions[lang],
   };
 
   return (
     <div className="flex flex-col min-h-screen font-[family:var(--font-geist-sans)] bg-sand-light text-navy-dark">
       <header className="w-full flex justify-end p-2 text-sm bg-sand-light">
         <div className="flex gap-4">
-          <Link href={`/${lang}/recipes`}>
+          <Link href={`/${String(lang)}/recipes`}>
             <span className="hover:underline text-navy">
               {translations.allRecipes}
             </span>
@@ -112,15 +124,19 @@ export async function generateStaticParams() {
   const translationsEn = getTranslations("en");
   const translationsFa = getTranslations("fa");
 
-  const recipesEn = translationsEn.topRecipes.map((recipe: Recipe) => ({
-    lang: "en",
-    recipe: recipe.link.split("/").pop(),
-  }));
+  const recipesEn = translationsEn.topRecipes.map(
+    (recipe: { name: string; link: string }) => ({
+      lang: "en",
+      recipe: recipe.link.split("/").pop(),
+    })
+  );
 
-  const recipesFa = translationsFa.topRecipes.map((recipe: Recipe) => ({
-    lang: "fa",
-    recipe: recipe.link.split("/").pop(),
-  }));
+  const recipesFa = translationsFa.topRecipes.map(
+    (recipe: { name: string; link: string }) => ({
+      lang: "fa",
+      recipe: recipe.link.split("/").pop(),
+    })
+  );
 
   return [...recipesEn, ...recipesFa];
 }
@@ -130,10 +146,11 @@ export async function generateMetadata({
 }: {
   params: { lang: string; recipe: string };
 }) {
-  const translations = getTranslations(params.lang);
+  const translations = getTranslations(params.lang as "en" | "fa");
   const title =
-    translations.topRecipes.find((r: Recipe) => r.link.endsWith(params.recipe))
-      ?.name || "Recipe";
+    translations.topRecipes.find((r: { name: string; link: string }) =>
+      r.link.endsWith(params.recipe)
+    )?.name || "Recipe";
   return {
     title: `${title} | My Recipe App`,
     description: `Learn how to make ${title} with our easy-to-follow instructions.`,

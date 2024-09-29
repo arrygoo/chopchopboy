@@ -1,3 +1,5 @@
+export type LanguageCode = "en" | "fa";
+
 const recipes = {
   abgoosht: {
     name: {
@@ -220,7 +222,7 @@ const recipes = {
       ],
       fa: [
         "مرغ را در ماست، زعفران، آب لیمو و ادویه جات مارینه کنید.",
-        "تکه های مرغ را به سیخ بکشید.",
+        "تکه های مرغ ا به سیخ بکشید.",
         "روی گریل بپزید تا طلایی و پخته شود.",
         "با برنج و گوجه فرنگی کبابی سرو کنید.",
       ],
@@ -508,7 +510,7 @@ const recipes = {
   "mirza-ghasemi": {
     name: {
       en: "Mirza Ghasemi",
-      fa: "میرزا قاسمی",
+      fa: "میرزا ق��سمی",
     },
     ingredients: {
       en: ["Eggplant", "Tomatoes", "Garlic", "Eggs", "Turmeric", "Oil"],
@@ -686,7 +688,7 @@ const translations = {
     searchPlaceholder: "Search for recipes...",
     findRecipes: "Find Recipes",
     topRecipes: Object.keys(recipes).map((key) => ({
-      name: recipes[key].name.en,
+      name: recipes[key as keyof typeof recipes].name.en,
       link: `/en/recipes/${key}`,
     })),
     ingredients: "Ingredients",
@@ -699,7 +701,7 @@ const translations = {
     searchPlaceholder: "جستجوی دستور پخت...",
     findRecipes: "یافتن دستور پخت",
     topRecipes: Object.keys(recipes).map((key) => ({
-      name: recipes[key].name.fa,
+      name: recipes[key as keyof typeof recipes].name.fa,
       link: `/fa/recipes/${key}`,
     })),
     ingredients: "مواد لازم",
@@ -710,6 +712,6 @@ const translations = {
   },
 };
 
-export function getTranslations(lang: string) {
+export function getTranslations(lang: LanguageCode) {
   return translations[lang];
 }

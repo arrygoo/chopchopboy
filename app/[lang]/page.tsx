@@ -3,22 +3,24 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getTranslations } from "../utils/getTranslations";
+import { getTranslations, LanguageCode } from "../utils/getTranslations";
 
 // Define the Recipe type if it's a custom type
 type Recipe = {
+  name: string;
   link: string;
-  name: {
-    en: string;
-    fa: string;
-  };
 };
 
-export default function Home({ params }: { params: { lang: string } }) {
-  const { lang } = params;
+interface Suggestion {
+  name: string;
+  link: string;
+}
+
+export default function Home({ params }: { params: { lang: LanguageCode } }) {
+  const { lang } = params as { lang: LanguageCode };
   const translations = getTranslations(lang);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const router = useRouter();
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,12 +29,16 @@ export default function Home({ params }: { params: { lang: string } }) {
 
     if (query.length > 0) {
       const filteredSuggestions = translations.topRecipes.filter(
-        (recipe: Recipe) => {
+        (recipe: { name: string; link: string }) => {
           const recipeKey = recipe.link.split("/").pop() as string;
           const recipeNameEn =
-            translations.recipes[recipeKey].name.en.toLowerCase();
+            translations.recipes[
+              recipeKey as keyof typeof translations.recipes
+            ].name.en.toLowerCase();
           const recipeNameFa =
-            translations.recipes[recipeKey].name.fa.toLowerCase();
+            translations.recipes[
+              recipeKey as keyof typeof translations.recipes
+            ].name.fa.toLowerCase();
           return recipeNameEn.includes(query) || recipeNameFa.includes(query);
         }
       );
@@ -44,12 +50,16 @@ export default function Home({ params }: { params: { lang: string } }) {
 
   const handleSearch = () => {
     const query = searchQuery.toLowerCase();
-    const foundRecipe = translations.topRecipes.find((recipe) => {
-      const recipeNameEn = recipe.name.toLowerCase();
+    const foundRecipe = translations.topRecipes.find((recipe: Recipe) => {
+      const recipeKey = recipe.link.split("/").pop() || "";
+      const recipeNameEn =
+        translations.recipes[
+          recipeKey as keyof typeof translations.recipes
+        ]?.name.en.toLowerCase() || "";
       const recipeNameFa =
         translations.recipes[
-          recipe.link.split("/").pop()
-        ].name.fa.toLowerCase();
+          recipeKey as keyof typeof translations.recipes
+        ]?.name.fa.toLowerCase() || "";
       return recipeNameEn === query || recipeNameFa === query;
     });
 
@@ -60,7 +70,7 @@ export default function Home({ params }: { params: { lang: string } }) {
     }
   };
 
-  const handleSuggestionClick = (recipe) => {
+  const handleSuggestionClick = (recipe: Suggestion) => {
     setSearchQuery(recipe.name);
     setSuggestions([]);
     router.push(recipe.link);
