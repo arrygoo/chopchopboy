@@ -11,13 +11,25 @@ interface RecipesListPageProps {
 type Recipe = {
   link: string;
   name: string;
-  // other properties...
+  cuisine: string;
 };
 
 export default function RecipesListPage({ params }: RecipesListPageProps) {
   const { lang } = params;
   const translations = getTranslations(lang as "en" | "fa");
   const recipes = translations.topRecipes;
+
+  // Categorize recipes by cuisine
+  const categorizedRecipes = recipes.reduce(
+    (acc: Record<string, Recipe[]>, recipe: Recipe) => {
+      if (!acc[recipe.cuisine]) {
+        acc[recipe.cuisine] = [];
+      }
+      acc[recipe.cuisine].push(recipe);
+      return acc;
+    },
+    {}
+  );
 
   return (
     <div className="flex flex-col min-h-screen font-[family:var(--font-geist-sans)] bg-sand-light text-navy-dark">
@@ -56,15 +68,26 @@ export default function RecipesListPage({ params }: RecipesListPageProps) {
         dir={lang === "fa" ? "rtl" : "ltr"}
       >
         <h1 className="text-3xl font-bold mb-6">{translations.allRecipes}</h1>
-        <ul className="w-full max-w-2xl list-none pl-0">
-          {recipes.map((recipe: Recipe, index: number) => (
-            <li key={index} className="mb-2 text-sage">
-              <Link href={`/${lang}/recipes/${recipe.link.split("/").pop()}`}>
-                <span className="hover:underline">{recipe.name}</span>
-              </Link>
-            </li>
+        {Object.keys(categorizedRecipes)
+          .sort((a, b) =>
+            a === "International" ? -1 : b === "International" ? 1 : 0
+          )
+          .map((cuisine) => (
+            <div key={cuisine} className="w-full max-w-2xl mb-6">
+              <h2 className="text-2xl font-semibold mb-2">{cuisine}</h2>
+              <ul className="list-none pl-0">
+                {categorizedRecipes[cuisine].map((recipe, index) => (
+                  <li key={index} className="mb-2 text-sage">
+                    <Link
+                      href={`/${lang}/recipes/${recipe.link.split("/").pop()}`}
+                    >
+                      <span className="hover:underline">{recipe.name}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
-        </ul>
       </main>
     </div>
   );

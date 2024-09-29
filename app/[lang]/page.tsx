@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getTranslations, LanguageCode } from "../utils/getTranslations";
@@ -21,11 +21,13 @@ export default function Home({ params }: { params: { lang: LanguageCode } }) {
   const translations = getTranslations(lang);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const router = useRouter();
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
+    setSelectedIndex(-1); // Reset selected index when input changes
 
     if (query.length > 0) {
       const filteredSuggestions = translations.topRecipes.filter(
@@ -45,6 +47,20 @@ export default function Home({ params }: { params: { lang: LanguageCode } }) {
       setSuggestions(filteredSuggestions);
     } else {
       setSuggestions([]);
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "ArrowDown") {
+      setSelectedIndex((prevIndex) =>
+        prevIndex < suggestions.length - 1 ? prevIndex + 1 : prevIndex
+      );
+    } else if (event.key === "ArrowUp") {
+      setSelectedIndex((prevIndex) =>
+        prevIndex > 0 ? prevIndex - 1 : prevIndex
+      );
+    } else if (event.key === "Enter" && selectedIndex >= 0) {
+      handleSuggestionClick(suggestions[selectedIndex]);
     }
   };
 
@@ -73,8 +89,18 @@ export default function Home({ params }: { params: { lang: LanguageCode } }) {
   const handleSuggestionClick = (recipe: Suggestion) => {
     setSearchQuery(recipe.name);
     setSuggestions([]);
+    setSelectedIndex(-1); // Reset selected index when suggestion is clicked
     router.push(recipe.link);
   };
+
+  useEffect(() => {
+    if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
+      const selectedElement = document.getElementById(
+        `suggestion-${selectedIndex}`
+      );
+      selectedElement?.scrollIntoView({ block: "nearest" });
+    }
+  }, [selectedIndex]);
 
   return (
     <div className="flex flex-col min-h-screen font-[family:var(--font-geist-sans)] bg-sand-light text-navy-dark">
@@ -117,6 +143,7 @@ export default function Home({ params }: { params: { lang: LanguageCode } }) {
             dir={lang === "fa" ? "rtl" : "ltr"}
             value={searchQuery}
             onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
           />
           {suggestions.length > 0 && (
             <ul
@@ -124,10 +151,13 @@ export default function Home({ params }: { params: { lang: LanguageCode } }) {
                 lang === "fa" ? "text-right" : "text-left"
               }`}
             >
-              {suggestions.map((suggestion) => (
+              {suggestions.map((suggestion, index) => (
                 <li
+                  id={`suggestion-${index}`}
                   key={suggestion.name}
-                  className="px-4 py-2 hover:bg-sage-light cursor-pointer"
+                  className={`px-4 py-2 hover:bg-sage-light cursor-pointer ${
+                    index === selectedIndex ? "bg-sage-light" : ""
+                  }`}
                   onClick={() => handleSuggestionClick(suggestion)}
                 >
                   {suggestion.name}
