@@ -5,6 +5,15 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getTranslations } from "../utils/getTranslations";
 
+// Define the Recipe type if it's a custom type
+type Recipe = {
+  link: string;
+  name: {
+    en: string;
+    fa: string;
+  };
+};
+
 export default function Home({ params }: { params: { lang: string } }) {
   const { lang } = params;
   const translations = getTranslations(lang);
@@ -17,14 +26,16 @@ export default function Home({ params }: { params: { lang: string } }) {
     setSearchQuery(query);
 
     if (query.length > 0) {
-      const filteredSuggestions = translations.topRecipes.filter((recipe) => {
-        const recipeKey = recipe.link.split("/").pop() as string;
-        const recipeNameEn =
-          translations.recipes[recipeKey].name.en.toLowerCase();
-        const recipeNameFa =
-          translations.recipes[recipeKey].name.fa.toLowerCase();
-        return recipeNameEn.includes(query) || recipeNameFa.includes(query);
-      });
+      const filteredSuggestions = translations.topRecipes.filter(
+        (recipe: Recipe) => {
+          const recipeKey = recipe.link.split("/").pop() as string;
+          const recipeNameEn =
+            translations.recipes[recipeKey].name.en.toLowerCase();
+          const recipeNameFa =
+            translations.recipes[recipeKey].name.fa.toLowerCase();
+          return recipeNameEn.includes(query) || recipeNameFa.includes(query);
+        }
+      );
       setSuggestions(filteredSuggestions);
     } else {
       setSuggestions([]);
