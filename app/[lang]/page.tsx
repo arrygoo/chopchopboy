@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image"; // Imported Next.js Image component
 import { getTranslations, LanguageCode } from "../utils/getTranslations";
 
 // Define the Recipe type if it's a custom type
@@ -134,6 +135,16 @@ export default function Home({ params }: { params: { lang: LanguageCode } }) {
         dir={lang === "fa" ? "rtl" : "ltr"}
       >
         <div className="w-full max-w-md mx-auto mt-8">
+          {/* Updated Logo Image Using Next.js Image Component */}
+          <div className="mb-4 mx-auto h-16 w-auto relative">
+            <Image
+              src="/images/logo-clear-bg.png"
+              alt="Logo"
+              layout="fill"
+              objectFit="contain"
+              priority
+            />
+          </div>
           <input
             type="text"
             className={`w-full px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-sage transition-all duration-300 shadow-md placeholder-sage-light bg-white ${
